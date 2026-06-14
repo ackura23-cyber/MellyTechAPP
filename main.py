@@ -219,16 +219,29 @@ class MellyTechMobile(MDApp):
                         dash.ids.lista_ventas_hoy.add_widget(item)
 
                 # CARGAR INVENTARIO
+                LIMITE_LISTA = 50
+                inventario = datos.get('inventario', [])
                 dash.ids.lista_inventario.clear_widgets()
-                for prod in datos.get('inventario', []):
+                for prod in inventario[:LIMITE_LISTA]:
                     item = TwoLineIconListItem(text=prod['nombre'], secondary_text=f"Stock: {prod['stock']} | ${prod['precio']:.2f}")
                     item.add_widget(IconLeftWidget(icon="medical-bag"))
                     dash.ids.lista_inventario.add_widget(item)
+                if len(inventario) > LIMITE_LISTA:
+                    item = TwoLineIconListItem(text=f"+ {len(inventario) - LIMITE_LISTA} productos más", secondary_text="Revisa el panel completo para ver todo el catálogo")
+                    item.add_widget(IconLeftWidget(icon="dots-horizontal"))
+                    dash.ids.lista_inventario.add_widget(item)
 
                 # CARGAR ALERTAS
+                alertas = datos.get('alertas', [])
                 dash.ids.lista_alertas.clear_widgets()
-                for a in datos.get('alertas', []):
-                    dash.ids.lista_alertas.add_widget(TwoLineIconListItem(text=a['nombre'], secondary_text=a['mensaje']))
+                for a in alertas[:LIMITE_LISTA]:
+                    item = TwoLineIconListItem(text=a['nombre'], secondary_text=a['mensaje'])
+                    item.add_widget(IconLeftWidget(icon="alert"))
+                    dash.ids.lista_alertas.add_widget(item)
+                if len(alertas) > LIMITE_LISTA:
+                    item = TwoLineIconListItem(text=f"+ {len(alertas) - LIMITE_LISTA} alertas más", secondary_text="Revisa el panel completo para ver todas")
+                    item.add_widget(IconLeftWidget(icon="dots-horizontal"))
+                    dash.ids.lista_alertas.add_widget(item)
                 
                 toast("Sincronizado ✅")
         except:
